@@ -37,12 +37,11 @@ func findPDFLink(issueURL string) (string, error) {
 	}
 
 	var pdfLink string
-	doc.Find("div.button-wrap--current-download a.button").Each(func(i int, s *goquery.Selection) {
+	doc.Find("div.current-issue__content div.button-wrap--current-download a.button").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
-		if exists {
-			if strings.Contains(href, ".pdf") {
-				pdfLink = href
-			}
+		if exists && strings.Contains(href, ".pdf") {
+			pdfLink = href
+			return
 		}
 	})
 
@@ -69,7 +68,7 @@ func downloadPDF(pdfURL, filePath string) error {
 func main() {
 	outputDir := flag.String("output", ".", "Directory to save downloaded PDFs")
 	startIssue := flag.Int("startIssue", 1, "The starting issue number")
-	endIssue := flag.Int("endIssue", 144, "The ending issue number")
+	endIssue := flag.Int("endIssue", 150, "The ending issue number") // Default assumes 150 issues available
 	flag.Parse()
 
 	if err := os.MkdirAll(*outputDir, 0755); err != nil {
